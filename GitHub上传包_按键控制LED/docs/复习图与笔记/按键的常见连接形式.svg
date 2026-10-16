@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="1000" viewBox="0 0 1400 1000" role="img" aria-labelledby="title desc">
+  <title id="title">按键的常见连接形式</title>
+  <desc id="desc">四种按键输入接法。左上内部上拉，右上外部上拉，左下内部下拉，右下外部下拉，并标明按下松开时的逻辑电平。</desc>
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #172033; }
+      .title { font-size: 38px; font-weight: 700; }
+      .subtitle { font-size: 21px; fill: #475569; }
+      .head { font-size: 27px; font-weight: 700; }
+      .body { font-size: 21px; }
+      .small { font-size: 18px; fill: #475569; }
+      .wire { stroke: #334155; stroke-width: 4; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+      .vcc { stroke: #dc2626; stroke-width: 4; fill: none; stroke-linecap: round; }
+      .gnd { stroke: #2563eb; stroke-width: 4; fill: none; stroke-linecap: round; }
+      .res { fill: #fff7ed; stroke: #c2410c; stroke-width: 3; }
+      .pin { fill: #0f766e; }
+      .panel { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; rx: 18; }
+      .ok { fill: #ecfdf5; }
+      .tag { font-size: 18px; font-weight: 700; }
+    </style>
+  </defs>
+  <rect width="1400" height="1000" fill="#ffffff"/>
+  <text x="700" y="62" text-anchor="middle" class="title">按键的常见连接形式</text>
+  <text x="700" y="100" text-anchor="middle" class="subtitle">判断口诀：看按键松开时，谁把 GPIO 引脚拉到确定电平</text>
+
+  <!-- Top-left: internal pull-up, switch to GND -->
+  <g transform="translate(45,135)">
+    <rect class="panel ok" width="635" height="370"/>
+    <text x="28" y="45" class="head">① 按键接 GND，无外接电阻</text>
+    <rect x="28" y="65" width="260" height="34" rx="17" fill="#0f766e"/>
+    <text x="158" y="89" text-anchor="middle" class="tag" fill="#fff">STM32：内部上拉输入</text>
+    <text x="45" y="151" class="body">3.3V</text>
+    <path d="M105 145 V180" class="vcc"/>
+    <rect x="86" y="180" width="38" height="72" rx="5" class="res"/>
+    <text x="105" y="222" text-anchor="middle" class="small">内部</text>
+    <path d="M105 252 V292 H245" class="wire"/>
+    <circle cx="245" cy="292" r="7" class="pin"/>
+    <path d="M245 292 H425" class="wire"/>
+    <text x="252" y="276" class="small">PA0 输入</text>
+    <path d="M425 292 V268 M425 235 V208" class="wire"/>
+    <path d="M412 235 L438 218" class="wire"/>
+    <path d="M425 208 V188" class="gnd"/>
+    <text x="454" y="220" class="small">按键</text>
+    <path d="M425 188 V173" class="gnd"/>
+    <path d="M407 173 H443 M412 181 H438 M417 189 H433" class="gnd"/>
+    <text x="45" y="330" class="body">松开：内部电阻拉高，读 1</text>
+    <text x="45" y="359" class="body">按下：引脚接地，读 0</text>
+  </g>
+
+  <!-- Top-right: external pull-up -->
+  <g transform="translate(720,135)">
+    <rect class="panel" width="635" height="370"/>
+    <text x="28" y="45" class="head">② 外接上拉电阻，按键接 GND</text>
+    <rect x="28" y="65" width="360" height="34" rx="17" fill="#64748b"/>
+    <text x="208" y="89" text-anchor="middle" class="tag" fill="#fff">STM32：浮空或内部上拉均可</text>
+    <text x="45" y="151" class="body">3.3V</text>
+    <path d="M105 145 V180" class="vcc"/>
+    <rect x="86" y="180" width="38" height="72" rx="5" class="res"/>
+    <text x="105" y="222" text-anchor="middle" class="small">10kΩ</text>
+    <path d="M105 252 V292 H245" class="wire"/>
+    <circle cx="245" cy="292" r="7" class="pin"/>
+    <path d="M245 292 H425" class="wire"/>
+    <text x="252" y="276" class="small">PA0 输入</text>
+    <path d="M425 292 V268 M425 235 V208" class="wire"/>
+    <path d="M412 235 L438 218" class="wire"/>
+    <path d="M425 208 V188" class="gnd"/>
+    <text x="454" y="220" class="small">按键</text>
+    <path d="M425 188 V173" class="gnd"/>
+    <path d="M407 173 H443 M412 181 H438 M417 189 H433" class="gnd"/>
+    <text x="45" y="330" class="body">松开：外接电阻拉高，读 1</text>
+    <text x="45" y="359" class="body">按下：引脚接地，读 0</text>
+  </g>
+
+  <!-- Bottom-left: internal pull-down -->
+  <g transform="translate(45,535)">
+    <rect class="panel ok" width="635" height="370"/>
+    <text x="28" y="45" class="head">③ 按键接 3.3V，无外接电阻</text>
+    <rect x="28" y="65" width="260" height="34" rx="17" fill="#0f766e"/>
+    <text x="158" y="89" text-anchor="middle" class="tag" fill="#fff">STM32：内部下拉输入</text>
+    <text x="45" y="151" class="body">3.3V</text>
+    <path d="M105 145 V180" class="vcc"/>
+    <path d="M105 180 V204 M105 237 V268" class="wire"/>
+    <path d="M92 204 L118 221" class="wire"/>
+    <text x="135" y="224" class="small">按键</text>
+    <path d="M105 268 V292 H245" class="wire"/>
+    <circle cx="245" cy="292" r="7" class="pin"/>
+    <path d="M245 292 H425" class="wire"/>
+    <text x="252" y="276" class="small">PA0 输入</text>
+    <path d="M425 292 V315" class="wire"/>
+    <rect x="406" y="315" width="38" height="44" rx="5" class="res"/>
+    <text x="425" y="345" text-anchor="middle" class="small">内部</text>
+    <path d="M425 359 V370" class="gnd"/>
+    <path d="M407 370 H443 M412 378 H438 M417 386 H433" class="gnd"/>
+    <text x="45" y="330" class="body">松开：内部电阻拉低，读 0</text>
+    <text x="45" y="359" class="body">按下：引脚接 3.3V，读 1</text>
+  </g>
+
+  <!-- Bottom-right: external pull-down -->
+  <g transform="translate(720,535)">
+    <rect class="panel" width="635" height="370"/>
+    <text x="28" y="45" class="head">④ 外接下拉电阻，按键接 3.3V</text>
+    <rect x="28" y="65" width="360" height="34" rx="17" fill="#64748b"/>
+    <text x="208" y="89" text-anchor="middle" class="tag" fill="#fff">STM32：浮空或内部下拉均可</text>
+    <text x="45" y="151" class="body">3.3V</text>
+    <path d="M105 145 V180" class="vcc"/>
+    <path d="M105 180 V204 M105 237 V268" class="wire"/>
+    <path d="M92 204 L118 221" class="wire"/>
+    <text x="135" y="224" class="small">按键</text>
+    <path d="M105 268 V292 H245" class="wire"/>
+    <circle cx="245" cy="292" r="7" class="pin"/>
+    <path d="M245 292 H425" class="wire"/>
+    <text x="252" y="276" class="small">PA0 输入</text>
+    <path d="M425 292 V315" class="wire"/>
+    <rect x="406" y="315" width="38" height="44" rx="5" class="res"/>
+    <text x="425" y="345" text-anchor="middle" class="small">10kΩ</text>
+    <path d="M425 359 V370" class="gnd"/>
+    <path d="M407 370 H443 M412 378 H438 M417 386 H433" class="gnd"/>
+    <text x="45" y="330" class="body">松开：外接电阻拉低，读 0</text>
+    <text x="45" y="359" class="body">按下：引脚接 3.3V，读 1</text>
+  </g>
+  <text x="700" y="957" text-anchor="middle" class="subtitle">若已用外接上拉/下拉电阻，内部同方向电阻可开可不开；初学实验按图中推荐配置即可。</text>
+</svg>

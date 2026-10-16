@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1800" viewBox="0 0 1600 1800" role="img" aria-labelledby="title desc">
+  <title id="title">按实测导通关系连接四脚按键与 STM32 LED</title>
+  <desc id="desc">按用户实测远距离两脚常通、近距离两脚按下才通，将每只按键标成A组和B组。两只按键分别连接PE0与GND、PE6与GND，均为内部上拉。两只LED通过各自限流电阻连接3.3V与PF0、PF1。图是电气连接示意，不规定实物朝向或面包板孔位。</desc>
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #182433; }
+      .title { font-size: 40px; font-weight: 700; }
+      .head { font-size: 27px; font-weight: 700; }
+      .body { font-size: 24px; }
+      .small { font-size: 21px; fill: #435266; }
+      .tiny { font-size: 19px; fill: #435266; }
+      .pin { font-family: Consolas, "Microsoft YaHei", monospace; font-size: 27px; font-weight: 700; }
+      .blueText { fill: #226ac0; }
+      .orangeText { fill: #ad5c17; }
+      .greenText { fill: #21754e; }
+      .redText { fill: #ae3232; }
+      .blueWire { stroke: #3278c8; stroke-width: 5; fill: none; }
+      .orangeWire { stroke: #c7762b; stroke-width: 5; fill: none; }
+      .wire { stroke: #475b72; stroke-width: 4; fill: none; }
+      .switch { stroke: #475b72; stroke-width: 4; fill: none; stroke-linecap: round; }
+      .bluePad { fill: #fff; stroke: #3278c8; stroke-width: 5; }
+      .orangePad { fill: #fff; stroke: #c7762b; stroke-width: 5; }
+      .ground { stroke: #c7762b; stroke-width: 4; fill: none; }
+    </style>
+  </defs>
+  <rect width="1600" height="1800" fill="#ffffff"/>
+  <text x="64" y="71" class="title">四脚按键怎么接？先认两组，再接 GPIO 与 GND</text>
+  <text x="64" y="114" class="body">依据你这只按键的实测：远距离两脚常通；近距离跨组两脚，按下才通。</text>
+  <text x="64" y="152" class="small redText">这是电气连接示意图，不是实物孔位图；A / B 为人为标记，实物朝向请用通断档对应。</text>
+
+  <rect x="64" y="183" width="1472" height="353" rx="18" fill="#f7f9fc" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="92" y="228" class="head">① 一只四脚按键，实际上只有两个电气节点</text>
+  <rect x="170" y="278" width="370" height="181" rx="20" fill="#eef1f5" stroke="#c5ced9" stroke-width="2"/>
+  <text x="192" y="276" class="small blueText">A1</text>
+  <text x="502" y="276" class="small blueText">A2</text>
+  <path d="M205 302 H515" class="blueWire"/>
+  <circle cx="205" cy="302" r="9" class="bluePad"/>
+  <circle cx="515" cy="302" r="9" class="bluePad"/>
+  <text x="220" y="339" class="small blueText">A 组常通</text>
+  <path d="M360 302 V354 M360 391 V435 M360 391 L397 357" class="switch"/>
+  <text x="425" y="385" class="tiny">按下接通</text>
+  <path d="M205 435 H515" class="orangeWire"/>
+  <circle cx="205" cy="435" r="9" class="orangePad"/>
+  <circle cx="515" cy="435" r="9" class="orangePad"/>
+  <text x="192" y="491" class="small orangeText">B1</text>
+  <text x="502" y="491" class="small orangeText">B2</text>
+  <text x="220" y="471" class="small orangeText">B 组常通</text>
+  <text x="676" y="285" class="body">接线选：任意 A 脚 ＋ 任意 B 脚。</text>
+  <text x="676" y="328" class="body">比如图中的 A2 和 B2，其余两个脚不接。</text>
+  <text x="676" y="371" class="body">不能选同一组的 A1＋A2 或 B1＋B2。</text>
+  <text x="676" y="414" class="body">按下前：A 与 B 不通；按下后：A 与 B 导通。</text>
+  <rect x="657" y="444" width="840" height="65" rx="12" fill="#fff1da"/>
+  <text x="676" y="485" class="body orangeText">最可靠的标准：选“松开不响、按下才响”的一对。</text>
+
+  <rect x="64" y="562" width="1472" height="793" rx="18" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>
+  <text x="92" y="607" class="head">② 对照你当前代码的完整接线</text>
+  <text x="92" y="649" class="small">注意字母：按键接 GPIOE 的 PE0 / PE6；LED 接 GPIOF 的 PF0 / PF1，E 和 F 不是同一端口。</text>
+
+  <rect x="620" y="692" width="340" height="587" rx="22" fill="#eaf1fa" stroke="#7b9dc6" stroke-width="2"/>
+  <text x="790" y="738" class="head" text-anchor="middle">STM32F103ZET6</text>
+  <text x="790" y="779" class="small" text-anchor="middle">输入已配置 GPIO_Mode_IPU</text>
+
+  <text x="108" y="742" class="head blueText">按键 1</text>
+  <rect x="128" y="793" width="326" height="176" rx="16" fill="#f7f9fc" stroke="#d6dce5" stroke-width="2"/>
+  <path d="M150 820 H430" class="blueWire"/>
+  <path d="M150 946 H430" class="orangeWire"/>
+  <circle cx="150" cy="820" r="8" class="bluePad"/>
+  <circle cx="430" cy="820" r="8" class="bluePad"/>
+  <circle cx="150" cy="946" r="8" class="orangePad"/>
+  <circle cx="430" cy="946" r="8" class="orangePad"/>
+  <text x="133" y="783" class="small blueText">A1</text>
+  <text x="413" y="783" class="small blueText">A2</text>
+  <text x="133" y="1005" class="small orangeText">B1</text>
+  <text x="413" y="1005" class="small orangeText">B2</text>
+  <path d="M290 820 V861 M290 900 V946 M290 900 L325 865" class="switch"/>
+  <text x="159" y="881" class="tiny">A1、B1</text>
+  <text x="159" y="910" class="tiny">不接线</text>
+  <path d="M440 820 H620" class="blueWire"/>
+  <circle cx="620" cy="820" r="6" fill="#3278c8"/>
+  <text x="650" y="829" class="pin blueText">PE0</text>
+  <text x="474" y="797" class="small blueText">蓝线接 PE0</text>
+  <path d="M440 946 H526 V986" class="orangeWire"/>
+  <path d="M503 986 H549 M510 996 H542 M518 1006 H534" class="ground"/>
+  <text x="477" y="1040" class="small orangeText">GND</text>
+
+  <text x="108" y="1043" class="head blueText">按键 2</text>
+  <rect x="128" y="1094" width="326" height="176" rx="16" fill="#f7f9fc" stroke="#d6dce5" stroke-width="2"/>
+  <path d="M150 1121 H430" class="blueWire"/>
+  <path d="M150 1247 H430" class="orangeWire"/>
+  <circle cx="150" cy="1121" r="8" class="bluePad"/>
+  <circle cx="430" cy="1121" r="8" class="bluePad"/>
+  <circle cx="150" cy="1247" r="8" class="orangePad"/>
+  <circle cx="430" cy="1247" r="8" class="orangePad"/>
+  <text x="133" y="1084" class="small blueText">A1</text>
+  <text x="413" y="1084" class="small blueText">A2</text>
+  <text x="133" y="1306" class="small orangeText">B1</text>
+  <text x="413" y="1306" class="small orangeText">B2</text>
+  <path d="M290 1121 V1162 M290 1201 V1247 M290 1201 L325 1166" class="switch"/>
+  <text x="159" y="1182" class="tiny">A1、B1</text>
+  <text x="159" y="1211" class="tiny">不接线</text>
+  <path d="M440 1121 H620" class="blueWire"/>
+  <circle cx="620" cy="1121" r="6" fill="#3278c8"/>
+  <text x="650" y="1130" class="pin blueText">PE6</text>
+  <text x="474" y="1098" class="small blueText">蓝线接 PE6</text>
+  <path d="M440 1247 H526 V1287" class="orangeWire"/>
+  <path d="M503 1287 H549 M510 1297 H542 M518 1307 H534" class="ground"/>
+  <text x="477" y="1338" class="small orangeText">GND</text>
+
+  <text x="790" y="913" class="body" text-anchor="middle">内部上拉提供默认高电平</text>
+  <text x="790" y="954" class="body" text-anchor="middle">松开读 1 · 按下读 0</text>
+  <text x="790" y="1005" class="small" text-anchor="middle">按键无需另接 3.3V</text>
+  <text x="790" y="1204" class="small" text-anchor="middle">两处 GND 都接开发板 GND</text>
+  <text x="790" y="1239" class="small" text-anchor="middle">电路通过程序关联，不直接短接 IO</text>
+
+  <circle cx="960" cy="820" r="6" fill="#21754e"/>
+  <text x="867" y="829" class="pin greenText">PF0</text>
+  <path d="M960 820 H1149 M1201 820 H1292 M1382 820 H1460 V779" class="wire"/>
+  <circle cx="1175" cy="820" r="26" fill="#ffdbd9" stroke="#c85850" stroke-width="3"/>
+  <text x="1175" y="828" class="small redText" text-anchor="middle">灯</text>
+  <text x="1125" y="794" class="head">−</text>
+  <text x="1209" y="794" class="head">＋</text>
+  <rect x="1292" y="803" width="90" height="34" fill="#fff7e6" stroke="#92713d" stroke-width="3"/>
+  <text x="1337" y="782" class="small" text-anchor="middle">330Ω</text>
+  <circle cx="1460" cy="779" r="6" fill="#475b72"/>
+  <text x="1460" y="749" class="small" text-anchor="middle">3.3V</text>
+  <text x="1187" y="882" class="body greenText" text-anchor="middle">LED1：PF0 为 0 时亮</text>
+  <text x="1040" y="921" class="small">阴极 − 接 PF0，阳极 ＋ 经电阻接 3.3V</text>
+
+  <circle cx="960" cy="1121" r="6" fill="#21754e"/>
+  <text x="867" y="1130" class="pin greenText">PF1</text>
+  <path d="M960 1121 H1149 M1201 1121 H1292 M1382 1121 H1460 V1080" class="wire"/>
+  <circle cx="1175" cy="1121" r="26" fill="#d5f1dc" stroke="#469660" stroke-width="3"/>
+  <text x="1175" y="1129" class="small greenText" text-anchor="middle">灯</text>
+  <text x="1125" y="1095" class="head">−</text>
+  <text x="1209" y="1095" class="head">＋</text>
+  <rect x="1292" y="1104" width="90" height="34" fill="#fff7e6" stroke="#92713d" stroke-width="3"/>
+  <text x="1337" y="1083" class="small" text-anchor="middle">330Ω</text>
+  <circle cx="1460" cy="1080" r="6" fill="#475b72"/>
+  <text x="1460" y="1050" class="small" text-anchor="middle">3.3V</text>
+  <text x="1187" y="1183" class="body greenText" text-anchor="middle">LED2：PF1 为 0 时亮</text>
+  <text x="1040" y="1222" class="small">阴极 − 接 PF1，阳极 ＋ 经电阻接 3.3V</text>
+  <text x="1020" y="1294" class="tiny">每只 LED 各用一个限流电阻；阻值按 LED 参数确认。</text>
+  <text x="1020" y="1324" class="tiny">圆形“灯”图标仅说明连接极性，不表示实物外形。</text>
+
+  <rect x="64" y="1381" width="1472" height="211" rx="18" fill="#fff7e6" stroke="#e4bd67" stroke-width="2"/>
+  <text x="92" y="1427" class="head">③ 面包板最容易接错的地方</text>
+  <text x="92" y="1469" class="body">同一个内部连通的五孔组，就是同一个节点。按键 A、B 两组不能被面包板提前连通。</text>
+  <text x="92" y="1511" class="body">按键两端插在同一连通组 → 一直读 0；电源 3.3V 与 GND 插在同组 → 电源短路。</text>
+  <text x="92" y="1553" class="body">按键跨中央沟槽可帮助分开触点，但是否插对仍以通断测试为准，不能只看摆放方向。</text>
+
+  <rect x="64" y="1618" width="1472" height="134" rx="18" fill="#edf5ff" stroke="#94b9e9" stroke-width="2"/>
+  <text x="92" y="1661" class="head">先验证一只按键，再接第二只</text>
+  <text x="92" y="1701" class="small">断开开发板和电源 → 按键插上面包板 → 测所选两脚：松开不响、按下响 → 再接 PE0 与 GND。</text>
+  <text x="92" y="1735" class="small">按当前程序：按键1松手后翻转 PF0 灯；按键2松手后翻转 PF1 灯。只有一盏灯时先验证第一路。</text>
+</svg>
