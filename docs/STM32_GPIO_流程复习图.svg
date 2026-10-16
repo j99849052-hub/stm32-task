@@ -1,0 +1,116 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1320" viewBox="0 0 1600 1320" role="img" aria-labelledby="title desc">
+  <title id="title">STM32 GPIO配置流程复习图</title>
+  <desc id="desc">展示从开发板手册查找引脚，到RCC开启GPIO时钟、CRL或CRH配置引脚模式、ODR输出电平的过程，并以PB5为例解释寄存器位字段。</desc>
+  <defs>
+    <style>
+      text { font-family: "Microsoft YaHei", "Noto Sans CJK SC", sans-serif; fill: #182433; }
+      .title { font-size: 34px; font-weight: 700; }
+      .sub { font-size: 18px; fill: #526174; }
+      .head { font-size: 22px; font-weight: 700; }
+      .body { font-size: 18px; }
+      .small { font-size: 16px; fill: #435266; }
+      .code { font-family: Consolas, "Microsoft YaHei", monospace; font-size: 18px; }
+      .panel { fill: #f7f9fc; stroke: #cbd5e1; stroke-width: 2; rx: 18; }
+      .blue { fill: #eaf2ff; stroke: #82a9e8; stroke-width: 2; rx: 16; }
+      .green { fill: #eaf7ee; stroke: #7fbd91; stroke-width: 2; rx: 16; }
+      .gold { fill: #fff5dd; stroke: #e4bd67; stroke-width: 2; rx: 16; }
+      .line { stroke: #66788e; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .divider { stroke: #d7dee8; stroke-width: 1.5; }
+    </style>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M0,0 L10,5 L0,10 z" fill="#66788e"/>
+    </marker>
+  </defs>
+
+  <rect width="1600" height="1320" fill="#ffffff"/>
+  <text x="64" y="64" class="title">STM32 GPIO：从查引脚到控制电平</text>
+  <text x="64" y="98" class="sub">先查“板子怎么接”，再查“芯片寄存器怎么配”</text>
+
+  <!-- Workflow -->
+  <rect x="64" y="128" width="1472" height="272" class="panel"/>
+  <text x="92" y="168" class="head">一、实际操作顺序</text>
+  <rect x="96" y="196" width="300" height="150" class="blue"/>
+  <text x="120" y="232" class="head">开发板硬件手册</text>
+  <text x="120" y="267" class="body">查目标器件接到哪个引脚</text>
+  <text x="120" y="300" class="body">查外部电路的接法/有效电平</text>
+  <text x="120" y="329" class="small">板级信息：每块板可能不同</text>
+
+  <path d="M410 270 L475 270" class="line"/>
+  <rect x="490" y="196" width="300" height="150" class="gold"/>
+  <text x="514" y="232" class="head">确定 GPIO 引脚</text>
+  <text x="514" y="270" class="body">例如：PB5</text>
+  <text x="514" y="302" class="body">P = 端口组，B = GPIOB</text>
+  <text x="514" y="330" class="body">5 = 该组的第 5 号引脚</text>
+
+  <path d="M804 270 L869 270" class="line"/>
+  <rect x="884" y="196" width="300" height="150" class="blue"/>
+  <text x="908" y="232" class="head">STM32F1 参考手册</text>
+  <text x="908" y="270" class="body">查 RCC：打开 GPIO 端口时钟</text>
+  <text x="908" y="302" class="body">查 CRL/CRH：配置引脚模式</text>
+  <text x="908" y="330" class="body">查 ODR：设置输出电平</text>
+
+  <path d="M1198 270 L1263 270" class="line"/>
+  <rect x="1278" y="196" width="230" height="150" class="green"/>
+  <text x="1302" y="232" class="head">写程序并验证</text>
+  <text x="1302" y="270" class="body">器件表现由板上</text>
+  <text x="1302" y="300" class="body">实际接线决定</text>
+
+  <!-- Register relations -->
+  <rect x="64" y="428" width="1472" height="250" class="panel"/>
+  <text x="92" y="468" class="head">二、寄存器之间的关系</text>
+  <rect x="105" y="500" width="360" height="132" class="blue"/>
+  <text x="132" y="539" class="head">RCC</text>
+  <text x="132" y="575" class="body">给对应 GPIO 端口打开时钟</text>
+  <text x="132" y="608" class="code">RCC → APB2ENR</text>
+
+  <path d="M480 566 L555 566" class="line"/>
+  <rect x="570" y="500" width="430" height="132" class="gold"/>
+  <text x="596" y="539" class="head">GPIOx 的 CRL / CRH</text>
+  <text x="596" y="575" class="body">配置引脚：输入还是输出、输出类型/速度</text>
+  <text x="596" y="608" class="small">CRL 管引脚 0～7；CRH 管引脚 8～15</text>
+
+  <path d="M1015 566 L1090 566" class="line"/>
+  <rect x="1105" y="500" width="370" height="132" class="green"/>
+  <text x="1132" y="539" class="head">GPIOx 的 ODR</text>
+  <text x="1132" y="575" class="body">每一位对应一个引脚的输出数据</text>
+  <text x="1132" y="608" class="small">0 → 低电平；1 → 高电平（输出模式时）</text>
+  <text x="132" y="657" class="small">它们是 GPIOB 内彼此独立的寄存器，不是包含关系；相同编号对应相同引脚：PB5 的模式看 CRL 字段，电平看 ODR5。</text>
+
+  <!-- PB5 field example -->
+  <rect x="64" y="706" width="1472" height="558" class="panel"/>
+  <text x="92" y="746" class="head">三、如何读 PB5 的 CRL 配置字段</text>
+  <text x="96" y="786" class="body">PB5 属于引脚 0～7，所以看 CRL；每个引脚占 4 位，PB5 字段位于 bit23～bit20。位编号从 bit0 开始。</text>
+
+  <rect x="105" y="814" width="1390" height="104" class="blue"/>
+  <text x="135" y="851" class="head">PB5 配置字段（4 位）</text>
+  <rect x="610" y="832" width="390" height="62" fill="#ffffff" stroke="#7d93ad" stroke-width="2" rx="8"/>
+  <line x1="805" y1="832" x2="805" y2="894" class="divider"/>
+  <text x="632" y="858" class="small">CNF5[1:0]</text>
+  <text x="632" y="882" class="small">bit23～bit22</text>
+  <text x="828" y="858" class="small">MODE5[1:0]</text>
+  <text x="828" y="882" class="small">bit21～bit20</text>
+  <text x="1040" y="855" class="body">CNF：具体工作类型</text>
+  <text x="1040" y="885" class="body">MODE：输入/输出与速度</text>
+
+  <rect x="105" y="940" width="680" height="202" class="gold"/>
+  <text x="132" y="978" class="head">CNF：先看 MODE 再解释</text>
+  <text x="132" y="1016" class="body">MODE = 00（输入）：</text>
+  <text x="152" y="1048" class="small">CNF 00 模拟输入　|　01 浮空输入</text>
+  <text x="152" y="1076" class="small">CNF 10 上拉/下拉输入　|　11 保留</text>
+  <text x="132" y="1110" class="body">MODE ≠ 00（输出）：</text>
+  <text x="152" y="1137" class="small">CNF 00 普通推挽　|　01 普通开漏</text>
+  <text x="152" y="1164" class="small">CNF 10 复用推挽　|　11 复用开漏</text>
+
+  <rect x="815" y="940" width="680" height="202" class="blue"/>
+  <text x="842" y="978" class="head">MODE：决定输入/输出和输出速度</text>
+  <text x="842" y="1020" class="body">00 = 输入（复位后的默认状态）</text>
+  <text x="842" y="1054" class="body">01 = 输出，最高 10 MHz</text>
+  <text x="842" y="1088" class="body">10 = 输出，最高 2 MHz</text>
+  <text x="842" y="1122" class="body">11 = 输出，最高 50 MHz</text>
+
+  <rect x="105" y="1160" width="1390" height="76" class="green"/>
+  <text x="132" y="1190" class="body">本例选普通推挽输出：CNF5=00，MODE5=11 → 0011（二进制）= 0x3</text>
+  <text x="132" y="1220" class="code">0x3 &lt;&lt; 20 = 0x00300000　　清除 PB5 原字段：&amp; 0xFF0FFFFF　　再写入新字段：| 0x00300000</text>
+
+  <text x="96" y="1290" class="small">注：芯片手册规定寄存器位的含义；开发板手册规定引脚连接到什么外部电路。</text>
+</svg>

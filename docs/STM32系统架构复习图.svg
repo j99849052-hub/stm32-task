@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1180" viewBox="0 0 1600 1180">
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#43566b"/></marker>
+  <style>
+    text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#203044}
+    .title{font-size:34px;font-weight:700}.sub{font-size:17px;fill:#536579}
+    .head{font-size:21px;font-weight:700}.body{font-size:16px}.small{font-size:14px;fill:#465a70}
+    .box{stroke:#50657b;stroke-width:2;rx:12}.edge{stroke:#43566b;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    .bus{stroke:#60758b;stroke-width:5;fill:none}.label{font-size:14px;font-weight:600;fill:#43566b}
+  </style>
+</defs>
+<rect width="1600" height="1180" fill="#f4f7fb"/>
+<text x="800" y="55" text-anchor="middle" class="title">STM32 系统结构复习图（以 STM32F1 / Cortex‑M3 为例）</text>
+<text x="800" y="86" text-anchor="middle" class="sub">把“CPU 如何取指、读写存储器、访问外设”串成一条路径</text>
+
+<!-- 主体模块 -->
+<rect x="45" y="125" width="340" height="405" fill="#e9f1ff" class="box"/>
+<text x="215" y="163" text-anchor="middle" class="head">Cortex‑M3 内核（CPU）</text>
+<text x="75" y="205" class="body">负责执行程序指令、进行计算</text>
+<rect x="80" y="238" width="270" height="63" fill="#fff" class="box"/>
+<text x="215" y="265" text-anchor="middle" class="head">ICode 指令通道</text><text x="215" y="288" text-anchor="middle" class="small">主要用于取出要执行的代码</text>
+<rect x="80" y="320" width="270" height="63" fill="#fff" class="box"/>
+<text x="215" y="347" text-anchor="middle" class="head">DCode 数据通道</text><text x="215" y="370" text-anchor="middle" class="small">内核访问代码区中的数据</text>
+<rect x="80" y="402" width="270" height="82" fill="#fff" class="box"/>
+<text x="215" y="432" text-anchor="middle" class="head">System 系统通道</text><text x="215" y="458" text-anchor="middle" class="small">访问 SRAM、外设等系统资源</text>
+
+<rect x="460" y="260" width="240" height="205" fill="#fff0d9" class="box"/>
+<text x="580" y="302" text-anchor="middle" class="head">Bus Matrix 总线矩阵</text>
+<text x="485" y="340" class="body">像交通调度路口：</text>
+<text x="485" y="371" class="body">协调 CPU 与 DMA 的访问</text>
+<text x="485" y="402" class="body">把请求送到对应总线/目标</text>
+
+<rect x="800" y="255" width="230" height="210" fill="#e8f7ec" class="box"/>
+<text x="915" y="298" text-anchor="middle" class="head">AHB 主总线</text>
+<text x="915" y="329" text-anchor="middle" class="small">Advanced High-performance Bus</text>
+<text x="915" y="362" text-anchor="middle" class="body">高速主干道</text>
+<text x="915" y="393" text-anchor="middle" class="small">连接内核、SRAM、DMA、桥接器</text>
+
+<rect x="1165" y="130" width="375" height="150" fill="#fce8e6" class="box"/>
+<text x="1352" y="170" text-anchor="middle" class="head">Flash 闪存</text>
+<text x="1195" y="207" class="body">存放程序代码、常量；断电仍保留</text>
+<text x="1195" y="240" class="small">CPU 启动后通常从这里取指运行</text>
+
+<rect x="1165" y="310" width="375" height="150" fill="#e8eaff" class="box"/>
+<text x="1352" y="350" text-anchor="middle" class="head">SRAM 静态随机存取存储器（运行内存）</text>
+<text x="1195" y="389" class="body">运行时变量、堆栈等临时数据放这里</text>
+<text x="1195" y="422" class="small">读写快；断电后内容消失</text>
+
+<!-- CPU通道与互连 -->
+<path d="M350 269 H750 V285 H800" class="edge"/><text x="565" y="250" class="label">ICode / DCode → Flash 接口</text>
+<path d="M350 443 H430 V360 H460" class="edge"/><text x="365" y="475" class="label">System</text>
+<path d="M700 360 H800" class="edge"/>
+<path d="M1030 290 H1100 V205 H1165" class="edge"/>
+<path d="M1030 415 H1165" class="edge"/>
+
+<!-- APB bridges/peripheral -->
+<rect x="755" y="540" width="300" height="95" fill="#fff" class="box"/>
+<text x="905" y="576" text-anchor="middle" class="head">AHB→APB 桥接器</text>
+<text x="905" y="606" text-anchor="middle" class="small">把主干道请求转接到较简单的外设总线</text>
+<path d="M915 465 V520" class="edge"/>
+
+<rect x="455" y="690" width="500" height="215" fill="#e6f5ff" class="box"/>
+<text x="705" y="730" text-anchor="middle" class="head">APB2 外设总线（常见：GPIO、ADC、USART1、SPI1、TIM1）</text>
+<text x="485" y="775" class="body">GPIO：通用输入/输出口，读按键、控制 LED</text>
+<text x="485" y="810" class="body">ADC：模数转换，把模拟电压读成数字值</text>
+<text x="485" y="845" class="body">USART1 / SPI1 / TIM1：串口通信 / 同步通信 / 定时与 PWM</text>
+
+<rect x="1005" y="690" width="535" height="215" fill="#e9f7ef" class="box"/>
+<text x="1272" y="730" text-anchor="middle" class="head">APB1 外设总线（常见：USART2、I2C、SPI2、TIM2–7）</text>
+<text x="1035" y="775" class="body">I2C：连接传感器等低速器件；SPI：高速同步通信</text>
+<text x="1035" y="810" class="body">TIM：定时、计数、测频、产生 PWM</text>
+<text x="1035" y="845" class="body">CAN / USB / DAC / PWR / RTC 等也可能挂在此总线</text>
+
+<path d="M905 635 V665 H705 V690" class="edge"/>
+<path d="M905 665 H1272 V690" class="edge"/>
+
+<!-- AHB peripherals & DMA -->
+<rect x="45" y="690" width="360" height="215" fill="#fff3df" class="box"/>
+<text x="225" y="730" text-anchor="middle" class="head">DMA1 / DMA2</text>
+<text x="75" y="775" class="body">Direct Memory Access</text>
+<text x="75" y="805" class="body">直接存储器访问：外设与内存搬数据</text>
+<text x="75" y="845" class="small">像“搬运工”，减少 CPU 逐字节处理</text>
+<rect x="45" y="925" width="360" height="115" fill="#f0eaff" class="box"/>
+<text x="225" y="965" text-anchor="middle" class="head">其他 AHB 侧模块</text>
+<text x="75" y="1000" class="body">FSMC 外部存储控制器；SDIO SD 卡接口</text>
+<path d="M405 800 H435 V430 H460" class="edge"/>
+
+<!-- RCC -->
+<rect x="455" y="950" width="500" height="105" fill="#fff8cc" class="box"/>
+<text x="705" y="990" text-anchor="middle" class="head">RCC 复位与时钟控制</text>
+<text x="705" y="1022" text-anchor="middle" class="small">给外设提供时钟、控制复位；用外设前通常先使能对应时钟</text>
+<path d="M705 950 V920 H705 V905" class="edge"/>
+
+<!-- Example route -->
+<rect x="1005" y="950" width="535" height="150" fill="#e8f4ff" class="box"/>
+<text x="1272" y="986" text-anchor="middle" class="head">例：程序控制 PB5 输出，点亮 LED</text>
+<text x="1035" y="1024" class="body">RCC 使能 GPIOB 时钟 → CPU 写 GPIOB 的 ODR5</text>
+<text x="1035" y="1054" class="body">写入 0/1 改变引脚电平 → 板上电路决定 LED 亮灭</text>
+<text x="1035" y="1080" class="small">CPU 的访问大致经过 System → 总线矩阵 → AHB → APB2 → GPIOB</text>
+
+<rect x="45" y="1090" width="910" height="55" fill="#fff" stroke="#9aa9b8" stroke-width="1.5" rx="8"/>
+<text x="65" y="1124" class="small">提醒：这是 STM32F1 架构示意；不同型号外设数量、总线归属可能不同，以具体芯片参考手册为准。</text>
+</svg>

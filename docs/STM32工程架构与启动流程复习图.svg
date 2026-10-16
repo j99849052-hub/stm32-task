@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1260" viewBox="0 0 1600 1260" role="img" aria-labelledby="title desc">
+<title id="title">STM32 工程架构与启动流程复习图</title>
+<desc id="desc">展示复位后从启动汇编到 SystemInit、main、外设中断处理的调用流程，以及标准外设库和芯片头文件各自的职责。</desc>
+<defs>
+  <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#43566b"/></marker>
+  <style>
+    text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#203044}
+    .title{font-size:34px;font-weight:700}.subtitle{font-size:18px;fill:#536579}
+    .head{font-size:22px;font-weight:700}.body{font-size:18px}.small{font-size:15px;fill:#465a70}
+    .box{stroke:#60758b;stroke-width:2;rx:13}.arrow{stroke:#43566b;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    .dash{stroke:#74879a;stroke-width:2.5;stroke-dasharray:8 7;fill:none;marker-end:url(#arrow)}
+  </style>
+</defs>
+<rect width="1600" height="1260" fill="#f4f7fb"/>
+<text x="800" y="55" text-anchor="middle" class="title">STM32 工程架构：上电后程序如何跑起来</text>
+<text x="800" y="88" text-anchor="middle" class="subtitle">先看执行顺序，再看每类文件提供什么——标准外设库把“寄存器细节”包装成更好调用的函数</text>
+
+<!-- 启动主链 -->
+<text x="65" y="145" class="head">① 上电 / 复位后的执行顺序</text>
+<rect x="55" y="170" width="300" height="260" fill="#dceaff" class="box"/>
+<text x="205" y="210" text-anchor="middle" class="head">startup_stm32f10x_hd.s</text>
+<text x="85" y="252" class="body">启动汇编文件（.s）</text>
+<text x="85" y="286" class="small">准备栈和中断向量表；定义复位入口</text>
+<text x="85" y="318" class="small">复位后进入 Reset_Handler</text>
+<text x="85" y="350" class="small">初始化 .data / .bss 等运行环境</text>
+<text x="85" y="382" class="small">随后依次调用 SystemInit、main</text>
+
+<rect x="430" y="170" width="300" height="260" fill="#e8f5df" class="box"/>
+<text x="580" y="210" text-anchor="middle" class="head">system_stm32f10x.c/.h</text>
+<text x="460" y="252" class="body">系统初始化函数</text>
+<text x="460" y="286" class="small">SystemInit 通常由启动代码调用</text>
+<text x="460" y="318" class="small">设置系统时钟等基础配置</text>
+<text x="460" y="350" class="small">.h 声明接口；.c 提供实现</text>
+<text x="460" y="382" class="small">不是“把芯片程序提取出来”</text>
+
+<rect x="805" y="170" width="300" height="260" fill="#eee2ff" class="box"/>
+<text x="955" y="210" text-anchor="middle" class="head">main.c</text>
+<text x="835" y="252" class="body">用户主程序入口</text>
+<text x="835" y="286" class="small">定义 main()，从这里开始写功能</text>
+<text x="835" y="318" class="small">初始化 GPIO、定时器、串口等</text>
+<text x="835" y="350" class="small">通常进入 while(1) 持续运行</text>
+<text x="835" y="382" class="small">再按需要调用库函数和自己的函数</text>
+
+<rect x="1180" y="170" width="360" height="260" fill="#ffe7d4" class="box"/>
+<text x="1360" y="210" text-anchor="middle" class="head">外设中断发生时</text>
+<text x="1210" y="252" class="body">外设发出中断请求</text>
+<text x="1210" y="286" class="small">CPU 暂停当前流程，按向量表跳转</text>
+<text x="1210" y="318" class="small">执行对应 IRQHandler 中断服务函数</text>
+<text x="1210" y="350" class="small">处理完后返回被打断的位置继续跑</text>
+<text x="1210" y="382" class="small">中断是事件触发，不是启动时必跑一步</text>
+
+<path d="M355 300 H430" class="arrow"/><text x="392" y="282" text-anchor="middle" class="small">调用</text>
+<path d="M730 300 H805" class="arrow"/><text x="767" y="282" text-anchor="middle" class="small">返回后调用</text>
+<path d="M1105 300 H1180" class="dash"/><text x="1142" y="282" text-anchor="middle" class="small">运行中响应</text>
+
+<!-- 中断定义 -->
+<rect x="55" y="475" width="705" height="175" fill="#fff1d8" class="box"/>
+<text x="407" y="515" text-anchor="middle" class="head">stm32f10x_it.c / .h —— 中断服务函数</text>
+<text x="85" y="557" class="body">.c 里写具体的中断处理函数；.h 放函数声明</text>
+<text x="85" y="592" class="small">启动文件的向量表把“中断编号”连到处理函数；弱默认函数可被用户实现覆盖。</text>
+<text x="85" y="620" class="small">例：定时器更新中断到来 → TIMx_IRQHandler() → 清标志、更新状态 → 返回主程序。</text>
+<path d="M1360 430 V455 H760 V525" class="dash"/>
+
+<!-- 文件依赖与库 -->
+<text x="65" y="710" class="head">② 工程文件各司其职：声明、实现、配置、调用</text>
+<rect x="55" y="740" width="350" height="250" fill="#ffe5e2" class="box"/>
+<text x="230" y="780" text-anchor="middle" class="head">芯片 / 内核底层描述</text>
+<text x="85" y="825" class="body">stm32f10x.h</text>
+<text x="85" y="854" class="small">STM32F10x 外设寄存器、位定义</text>
+<text x="85" y="895" class="body">core_cm3.c / .h</text>
+<text x="85" y="924" class="small">Cortex‑M3 内核寄存器与辅助接口</text>
+<text x="85" y="965" class="small">它们让代码能用名称访问硬件地址</text>
+
+<rect x="450" y="740" width="350" height="250" fill="#dff3f5" class="box"/>
+<text x="625" y="780" text-anchor="middle" class="head">标准外设库（SPL）</text>
+<text x="480" y="825" class="body">stm32f10x_gpio.c / .h 等</text>
+<text x="480" y="854" class="small">提供 GPIO、ADC、USART 等外设函数</text>
+<text x="480" y="895" class="body">misc.c / .h 等</text>
+<text x="480" y="924" class="small">提供 NVIC 等辅助函数（按库版本）</text>
+<text x="480" y="965" class="small">函数内部仍是在配置寄存器</text>
+
+<rect x="845" y="740" width="300" height="250" fill="#e9e3ff" class="box"/>
+<text x="995" y="780" text-anchor="middle" class="head">stm32f10x_conf.h</text>
+<text x="875" y="825" class="body">库配置头文件</text>
+<text x="875" y="862" class="small">选择要包含的外设库头文件</text>
+<text x="875" y="895" class="small">例如 GPIO、USART、TIM 模块</text>
+<text x="875" y="928" class="small">USE_STDPERIPH_DRIVER 常用于</text>
+<text x="875" y="957" class="small">启用标准外设库配置入口</text>
+
+<rect x="1190" y="740" width="350" height="250" fill="#e7f2ff" class="box"/>
+<text x="1365" y="780" text-anchor="middle" class="head">User 用户代码</text>
+<text x="1220" y="825" class="body">main.c、其他功能模块</text>
+<text x="1220" y="862" class="small">包含 .h，看到函数/寄存器声明</text>
+<text x="1220" y="895" class="small">调用库函数，或直接操作寄存器</text>
+<text x="1220" y="928" class="small">链接时还要把对应 .c 编译进工程</text>
+<text x="1220" y="957" class="small">只有头文件声明、缺少实现会链接失败</text>
+
+<path d="M405 865 H450" class="arrow"/>
+<path d="M800 865 H845" class="arrow"/>
+<path d="M1145 865 H1190" class="arrow"/>
+<text x="427" y="847" text-anchor="middle" class="small">库依赖底层</text>
+<text x="822" y="847" text-anchor="middle" class="small">选择模块</text>
+<text x="1167" y="847" text-anchor="middle" class="small">包含 / 调用</text>
+
+<!-- 实际调用举例 -->
+<rect x="55" y="1030" width="1485" height="165" fill="#ffffff" class="box"/>
+<text x="90" y="1070" class="head">用标准库点亮 LED 的“翻译关系”</text>
+<text x="90" y="1110" class="body">你的代码：GPIO_Init(...) / GPIO_SetBits(...) → 库函数实现：配置 GPIO 寄存器 → 芯片引脚输出电平 → 板上 LED 电路响应</text>
+<text x="90" y="1150" class="small">寄存器方式是直接写硬件控制位；标准库方式是调用封装好的 C 函数。二者最终都在控制同一套芯片硬件。</text>
+<text x="90" y="1180" class="small">注意：图中名称会随芯片系列、库版本和工程模板变化；启动文件、system 文件和外设库应与目标芯片匹配。</text>
+</svg>
