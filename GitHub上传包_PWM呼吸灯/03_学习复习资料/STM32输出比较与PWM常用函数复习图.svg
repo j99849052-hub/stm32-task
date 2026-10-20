@@ -1,0 +1,111 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2780" viewBox="0 0 1600 2780"><title>STM32输出比较与PWM常用函数复习图</title><desc>按学习优先级列出四组核心函数、四项后续函数及TIM1高级输出函数。含通道对应关系、用法、参数和学习顺序。</desc><g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+<rect x="0" y="0" width="1600" height="2780" rx="0" fill="#f4f7fb" stroke="#f4f7fb" stroke-width="2"/>
+<text x="64" y="82" font-size="49" fill="#17324b" font-weight="700" text-anchor="start">输出比较与 PWM · 现在该学哪些函数</text>
+<text x="64" y="130" font-size="27" fill="#50677c" font-weight="400" text-anchor="start">STM32F103C8T6 / STM32F10x 标准库；以 TIM2 通道 1 为例，不混入 HAL 接口。</text>
+<rect x="64" y="166" width="1472" height="114" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="89" y="211" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">先掌握四组：填表 → 配通道 → 改比较值 → 控制预装载。</text>
+<text x="89" y="256" font-size="28" fill="#17324b" font-weight="400" text-anchor="start">普通硬件 PWM 由定时器持续生成，不需要每一拍进入中断去翻转引脚。</text>
+<text x="64" y="326" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">TIM＝Timer 定时器；OC＝Output Compare 输出比较；PWM＝Pulse Width Modulation 脉宽调制</text>
+<text x="64" y="391" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">01  核心四组：会写调用，也要知道它改了什么</text>
+<rect x="64" y="419" width="724" height="264" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="461" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OCStructInit</text>
+<text x="86" y="502" font-size="28" fill="#117b70" font-weight="500" text-anchor="start">① 填默认值，不操作定时器硬件</text>
+<text x="86" y="546" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCInitTypeDef outputConfig;</text>
+<text x="86" y="583" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCStructInit(&amp;outputConfig);</text>
+<text x="86" y="620" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">然后改 Mode、OutputState、Pulse、Polarity。</text>
+<text x="86" y="657" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">默认不是 PWM，默认主输出也没有开启。</text>
+<rect x="812" y="419" width="724" height="264" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="461" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OC1Init</text>
+<text x="834" y="502" font-size="28" fill="#117b70" font-weight="500" text-anchor="start">② 把输出比较结构体写入通道 1</text>
+<text x="834" y="546" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC1Init(TIM2, &amp;outputConfig);</text>
+<text x="834" y="583" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM2 选定时器，函数名里的 1 选通道。</text>
+<text x="834" y="620" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">写模式、极性、通道使能和 CCR1 初值等。</text>
+<text x="834" y="657" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不替代时钟、引脚和整个时基初始化。</text>
+<rect x="64" y="705" width="724" height="264" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="747" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_SetCompare1</text>
+<text x="86" y="788" font-size="28" fill="#117b70" font-weight="500" text-anchor="start">③ 运行中修改 CCR1，调节 PWM 脉宽</text>
+<text x="86" y="832" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_SetCompare1(TIM2, 30);</text>
+<text x="86" y="869" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">PWM1＋High、向上计数、ARR＝99 时，</text>
+<text x="86" y="906" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">CCR＝30 → 高占比 30%；不是直接填微秒。</text>
+<text x="86" y="943" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">开了预装载，新的比较值要等更新后生效。</text>
+<rect x="812" y="705" width="724" height="264" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="747" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OC1PreloadConfig</text>
+<text x="834" y="788" font-size="28" fill="#117b70" font-weight="500" text-anchor="start">④ 配置 CCR1 预装载：新值何时生效</text>
+<text x="834" y="832" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC1PreloadConfig(TIM2,</text>
+<text x="834" y="869" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">    TIM_OCPreload_Enable);</text>
+<text x="834" y="906" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">启用：新值暂存，在更新事件时转为有效。</text>
+<text x="834" y="943" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">这里用 TIM_OCPreload_Enable，不是 ENABLE。</text>
+<text x="64" y="1043" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">02  换通道：只换对应函数，不要改错定时器</text>
+<rect x="64" y="1071" width="1472" height="221" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="90" y="1107" font-size="26" fill="#2267ac" font-weight="700" text-anchor="start">通道</text>
+<text x="260" y="1107" font-size="26" fill="#2267ac" font-weight="700" text-anchor="start">初始化</text>
+<text x="635" y="1107" font-size="26" fill="#2267ac" font-weight="700" text-anchor="start">改 CCR</text>
+<text x="1045" y="1107" font-size="26" fill="#2267ac" font-weight="700" text-anchor="start">CCR 预装载</text>
+<text x="90" y="1151" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">CH1</text>
+<text x="260" y="1151" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC1Init</text>
+<text x="635" y="1151" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_SetCompare1</text>
+<text x="1045" y="1151" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC1PreloadConfig</text>
+<text x="90" y="1190" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">CH2</text>
+<text x="260" y="1190" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC2Init</text>
+<text x="635" y="1190" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_SetCompare2</text>
+<text x="1045" y="1190" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC2PreloadConfig</text>
+<text x="90" y="1229" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">CH3</text>
+<text x="260" y="1229" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC3Init</text>
+<text x="635" y="1229" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_SetCompare3</text>
+<text x="1045" y="1229" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC3PreloadConfig</text>
+<text x="90" y="1268" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">CH4</text>
+<text x="260" y="1268" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC4Init</text>
+<text x="635" y="1268" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_SetCompare4</text>
+<text x="1045" y="1268" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">TIM_OC4PreloadConfig</text>
+<text x="64" y="1336" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">CC＝Capture/Compare 捕获/比较；CCR＝Capture/Compare Register 捕获/比较寄存器。</text>
+<text x="64" y="1400" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">03  下一步会查会用：单独改一项，不必重做整套初始化</text>
+<rect x="64" y="1427" width="1472" height="118" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1464" font-size="29" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OC1PolarityConfig</text>
+<text x="680" y="1464" font-size="23" fill="#117b70" font-weight="500" text-anchor="start">TIM_OC1PolarityConfig(TIM2, TIM_OCPolarity_Low);</text>
+<text x="86" y="1512" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">单独修改通道 1 的输出极性；High 高有效 / Low 低有效，不是输入边沿选择。</text>
+<rect x="64" y="1560" width="1472" height="118" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1597" font-size="29" fill="#2267ac" font-weight="700" text-anchor="start">TIM_CCxCmd</text>
+<text x="680" y="1597" font-size="23" fill="#117b70" font-weight="500" text-anchor="start">TIM_CCxCmd(TIM2, TIM_Channel_1, TIM_CCx_Disable);</text>
+<text x="86" y="1645" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">只开 / 关一个主通道；不停止整个计数器，也不能保证引脚一定变低。</text>
+<rect x="64" y="1693" width="1472" height="118" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1730" font-size="29" fill="#2267ac" font-weight="700" text-anchor="start">TIM_ARRPreloadConfig</text>
+<text x="680" y="1730" font-size="23" fill="#117b70" font-weight="500" text-anchor="start">TIM_ARRPreloadConfig(TIM2, ENABLE);</text>
+<text x="86" y="1778" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">控制 ARR 预装载；与上面的 CCR 预装载是两个独立开关。</text>
+<rect x="64" y="1826" width="1472" height="118" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1863" font-size="29" fill="#2267ac" font-weight="700" text-anchor="start">TIM_SetAutoreload</text>
+<text x="680" y="1863" font-size="23" fill="#117b70" font-weight="500" text-anchor="start">TIM_SetAutoreload(TIM2, 199);</text>
+<text x="86" y="1911" font-size="26" fill="#17324b" font-weight="400" text-anchor="start">修改 ARR、改变周期；可能同时改变占空比，预装载开启时等待更新生效。</text>
+<text x="64" y="1981" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">注意：TIM_CCxCmd 的 x 就在真实函数名里；开启用 TIM_CCx_Enable，不能写成 TIM_CC1Cmd。</text>
+<text x="64" y="2048" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">04  按这个顺序实践：先输出，再做呼吸灯</text>
+<rect x="64" y="2076" width="347" height="133" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="237" y="2113" font-size="29" fill="#2267ac" font-weight="700" text-anchor="middle">准备条件</text>
+<text x="237" y="2152" font-size="23" fill="#17324b" font-weight="500" text-anchor="middle">开时钟、配置时基</text>
+<text x="237" y="2186" font-size="23" fill="#50677c" font-weight="400" text-anchor="middle">实际引脚设复用输出</text>
+<text x="424" y="2155" font-size="30" fill="#2267ac" font-weight="500" text-anchor="middle">→</text>
+<rect x="439" y="2076" width="347" height="133" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="612" y="2113" font-size="29" fill="#2267ac" font-weight="700" text-anchor="middle">填配置</text>
+<text x="612" y="2152" font-size="23" fill="#17324b" font-weight="500" text-anchor="middle">StructInit 后改四项</text>
+<text x="612" y="2186" font-size="20" fill="#50677c" font-weight="400" text-anchor="middle">模式 / 开关 / Pulse / 极性</text>
+<text x="799" y="2155" font-size="30" fill="#2267ac" font-weight="500" text-anchor="middle">→</text>
+<rect x="814" y="2076" width="347" height="133" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="987" y="2113" font-size="29" fill="#2267ac" font-weight="700" text-anchor="middle">写入通道</text>
+<text x="987" y="2152" font-size="23" fill="#17324b" font-weight="500" text-anchor="middle">TIM_OC1Init</text>
+<text x="987" y="2186" font-size="23" fill="#50677c" font-weight="400" text-anchor="middle">再开启 CCR 预装载</text>
+<text x="1174" y="2155" font-size="30" fill="#2267ac" font-weight="500" text-anchor="middle">→</text>
+<rect x="1189" y="2076" width="347" height="133" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="1362" y="2113" font-size="29" fill="#2267ac" font-weight="700" text-anchor="middle">开始运行</text>
+<text x="1362" y="2152" font-size="23" fill="#17324b" font-weight="500" text-anchor="middle">TIM_Cmd(TIM2, ENABLE)</text>
+<text x="1362" y="2186" font-size="23" fill="#50677c" font-weight="400" text-anchor="middle">用 SetCompare1 调脉宽</text>
+<text x="64" y="2250" font-size="26" fill="#50677c" font-weight="400" text-anchor="start">预装载：新 CCR 先暂存 → 更新事件到来 → 进入实际比较；不是“立即重新启动定时器”。</text>
+<text x="64" y="2289" font-size="26" fill="#50677c" font-weight="400" text-anchor="start">同一个定时器的普通 PWM 通道各有 CCR，但共用计数器、PSC、ARR；改周期会影响其他通道。</text>
+<text x="64" y="2357" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">05  TIM1 高级输出 / 特殊功能：后续再学，不必现在全背</text>
+<rect x="64" y="2385" width="1472" height="151" rx="16" fill="#fff3e7" stroke="#ecd9c7" stroke-width="2"/>
+<text x="88" y="2427" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">TIM_CtrlPWMOutputs(TIM1, ENABLE)：打开高级定时器主输出总门控；TIM2 不需要这句。</text>
+<text x="88" y="2466" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">TIM_BDTRConfig：刹车与死区配置；TIM_CCxNCmd 等用于互补通道，做高级驱动时再学。</text>
+<text x="88" y="2505" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">ForcedOC / SelectOCxM / FastConfig / ClearOCxRef：特殊用途；ClearOCxRef 不是清中断标志。</text>
+<text x="64" y="2580" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Init＝Initialization 初始化；Struct＝Structure 结构体；Config＝Configuration 配置；Preload＝预装载。</text>
+<text x="64" y="2619" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Cmd＝Command 控制命令；Ctrl＝Control 控制；ARR＝Auto-Reload Register 自动重装载寄存器。</text>
+<text x="64" y="2658" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">TIM_Cmd 启动计数器 ≠ TIM_CCxCmd 开单通道 ≠ TIM_CtrlPWMOutputs 开高级定时器总输出。</text>
+<text x="64" y="2710" font-size="23" fill="#117b70" font-weight="400" text-anchor="start">配套第 2 张：PWM 函数调用与结构体参数对照，补充时基、输出比较、GPIO 的当前工程取值。</text>
+<text x="64" y="2748" font-size="22" fill="#50677c" font-weight="400" text-anchor="start">2026-10-20 · 依据当前 stm32f10x_tim.h/.c 与 ST RM0008 · 按当前学习阶段筛选；未修改、编译或烧录工程。</text>
+</g></svg>

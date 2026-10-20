@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2520" viewBox="0 0 1600 2520"><title>PWM函数调用与三种初始化结构体参数对照图</title><desc>按当前PWM LED工程解释函数实参、时基五个成员、输出比较八个成员、GPIO三个成员以及呼吸灯占空比更新参数。</desc><g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+<rect x="0" y="0" width="1600" height="2520" rx="15" fill="#f4f7fb" stroke="#f4f7fb" stroke-width="2"/>
+<text x="64" y="80" font-size="47" fill="#17324b" font-weight="700">PWM 函数调用与结构体参数 · 配套第 2 张</text>
+<text x="64" y="128" font-size="27" fill="#50677c" font-weight="400">依据你已完成的 PWM LED 工程；STM32F103C8T6 标准库，不替换原代码。</text>
+<rect x="64" y="165" width="1472" height="130" rx="15" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="89" y="211" font-size="35" fill="#2267ac" font-weight="700">TIM_OC1Init(TIM2, &amp;outputConfig);</text>
+<text x="89" y="257" font-size="28" fill="#17324b" font-weight="400">TIM2：选定时器；函数名中 1：选通道；&amp;outputConfig：传结构体地址（&amp;＝取地址）。</text>
+<text x="64" y="363" font-size="34" fill="#2267ac" font-weight="700">01  时基结构体 TIM_TimeBaseInitTypeDef</text>
+<text x="64" y="406" font-size="27" fill="#117b70" font-weight="500">TIM_TimeBaseInit(TIM2, &amp;timeBaseConfig);  → 设置周期与计数节拍</text>
+<rect x="64" y="429" width="1472" height="309" rx="15" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="465" font-size="26" fill="#2267ac" font-weight="700">结构体成员</text>
+<text x="594" y="465" font-size="26" fill="#2267ac" font-weight="700">当前值 / 配置宏</text>
+<text x="1070" y="465" font-size="26" fill="#2267ac" font-weight="700">意思</text>
+<rect x="74" y="483" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="517" font-size="25" fill="#17324b" font-weight="400">TIM_Prescaler</text>
+<text x="594" y="517" font-size="24" fill="#17324b" font-weight="400">720 - 1</text>
+<text x="1070" y="517" font-size="25" fill="#17324b" font-weight="400">PSC＝719，即除以 720</text>
+<text x="86" y="568" font-size="25" fill="#17324b" font-weight="400">TIM_Period</text>
+<text x="594" y="568" font-size="24" fill="#17324b" font-weight="400">100 - 1</text>
+<text x="1070" y="568" font-size="25" fill="#17324b" font-weight="400">ARR＝99，周期 100 拍</text>
+<rect x="74" y="585" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="619" font-size="25" fill="#17324b" font-weight="400">TIM_CounterMode</text>
+<text x="594" y="619" font-size="24" fill="#17324b" font-weight="400">TIM_CounterMode_Up</text>
+<text x="1070" y="619" font-size="25" fill="#17324b" font-weight="400">向上计数：0 → 99 → 0</text>
+<text x="86" y="670" font-size="25" fill="#17324b" font-weight="400">TIM_ClockDivision</text>
+<text x="594" y="670" font-size="24" fill="#17324b" font-weight="400">TIM_CKD_DIV1</text>
+<text x="1070" y="670" font-size="25" fill="#17324b" font-weight="400">滤波 / 死区时基不分频</text>
+<rect x="74" y="687" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="721" font-size="25" fill="#17324b" font-weight="400">TIM_RepetitionCounter</text>
+<text x="594" y="721" font-size="24" fill="#17324b" font-weight="400">0</text>
+<text x="1070" y="721" font-size="25" fill="#17324b" font-weight="400">TIM2 无重复计数功能</text>
+<text x="64" y="782" font-size="26" fill="#117b70" font-weight="500">按工程配置的 72 MHz 计算：72 MHz ÷ 720 ÷ 100＝1 kHz；ClockDivision 不是计数 PSC。</text>
+<text x="64" y="854" font-size="34" fill="#2267ac" font-weight="700">02  输出比较结构体 TIM_OCInitTypeDef</text>
+<text x="64" y="897" font-size="27" fill="#117b70" font-weight="500">TIM_OCStructInit(&amp;outputConfig);  → 填默认值；TIM_OC1Init(TIM2, &amp;outputConfig);  → 写入通道</text>
+<rect x="64" y="920" width="1472" height="462" rx="15" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="956" font-size="26" fill="#2267ac" font-weight="700">结构体成员</text>
+<text x="594" y="956" font-size="26" fill="#2267ac" font-weight="700">当前值 / 配置宏</text>
+<text x="1070" y="956" font-size="26" fill="#2267ac" font-weight="700">意思</text>
+<rect x="74" y="974" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1008" font-size="25" fill="#17324b" font-weight="400">TIM_OCMode</text>
+<text x="594" y="1008" font-size="24" fill="#17324b" font-weight="400">TIM_OCMode_PWM1</text>
+<text x="1070" y="1008" font-size="25" fill="#17324b" font-weight="400">CNT &lt; CCR 时有效</text>
+<text x="86" y="1059" font-size="25" fill="#17324b" font-weight="400">TIM_OutputState</text>
+<text x="594" y="1059" font-size="24" fill="#17324b" font-weight="400">TIM_OutputState_Enable</text>
+<text x="1070" y="1059" font-size="25" fill="#17324b" font-weight="400">开启主输出通道</text>
+<rect x="74" y="1076" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1110" font-size="25" fill="#17324b" font-weight="400">TIM_Pulse</text>
+<text x="594" y="1110" font-size="24" fill="#17324b" font-weight="400">0</text>
+<text x="1070" y="1110" font-size="25" fill="#17324b" font-weight="400">CCR1 初始为 0</text>
+<text x="86" y="1161" font-size="25" fill="#17324b" font-weight="400">TIM_OCPolarity</text>
+<text x="594" y="1161" font-size="24" fill="#17324b" font-weight="400">TIM_OCPolarity_High</text>
+<text x="1070" y="1161" font-size="25" fill="#17324b" font-weight="400">有效时输出高电平</text>
+<rect x="74" y="1178" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1212" font-size="25" fill="#17324b" font-weight="400">TIM_OutputNState</text>
+<text x="594" y="1212" font-size="24" fill="#17324b" font-weight="400">TIM_OutputNState_Disable</text>
+<text x="1070" y="1212" font-size="25" fill="#17324b" font-weight="400">互补输出关；TIM2 不用</text>
+<text x="86" y="1263" font-size="25" fill="#17324b" font-weight="400">TIM_OCNPolarity</text>
+<text x="594" y="1263" font-size="24" fill="#17324b" font-weight="400">高有效（默认）</text>
+<text x="1070" y="1263" font-size="25" fill="#17324b" font-weight="400">互补极性；TIM2 不用</text>
+<rect x="74" y="1280" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1314" font-size="25" fill="#17324b" font-weight="400">TIM_OCIdleState</text>
+<text x="594" y="1314" font-size="24" fill="#17324b" font-weight="400">TIM_OCIdleState_Reset</text>
+<text x="1070" y="1314" font-size="25" fill="#17324b" font-weight="400">主输出空闲低；TIM2 不用</text>
+<text x="86" y="1365" font-size="25" fill="#17324b" font-weight="400">TIM_OCNIdleState</text>
+<text x="594" y="1365" font-size="24" fill="#17324b" font-weight="400">TIM_OCNIdleState_Reset</text>
+<text x="1070" y="1365" font-size="25" fill="#17324b" font-weight="400">互补空闲低；TIM2 不用</text>
+<text x="64" y="1427" font-size="25" fill="#50677c" font-weight="400">前四项由你显式填写；后四项保留 StructInit 默认值。TIM2 不使用互补 / 高级空闲设置。</text>
+<text x="64" y="1464" font-size="25" fill="#50677c" font-weight="400">N 是互补输出标记；手动填互补极性应使用 TIM_OCNPolarity_High / Low，勿混填主输出宏。</text>
+<text x="64" y="1540" font-size="34" fill="#2267ac" font-weight="700">03  引脚结构体 GPIO_InitTypeDef</text>
+<text x="64" y="1583" font-size="27" fill="#117b70" font-weight="500">GPIO_Init(GPIOA, &amp;gpioConfig);  → 第一项是端口，第二项是 GPIO 结构体地址</text>
+<rect x="64" y="1606" width="1472" height="207" rx="15" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1642" font-size="26" fill="#2267ac" font-weight="700">结构体成员</text>
+<text x="594" y="1642" font-size="26" fill="#2267ac" font-weight="700">当前值 / 配置宏</text>
+<text x="1070" y="1642" font-size="26" fill="#2267ac" font-weight="700">意思</text>
+<rect x="74" y="1660" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1694" font-size="25" fill="#17324b" font-weight="400">GPIO_Pin</text>
+<text x="594" y="1694" font-size="24" fill="#17324b" font-weight="400">GPIO_Pin_0</text>
+<text x="1070" y="1694" font-size="25" fill="#17324b" font-weight="400">PA0：TIM2 默认 CH1 引脚</text>
+<text x="86" y="1745" font-size="25" fill="#17324b" font-weight="400">GPIO_Mode</text>
+<text x="594" y="1745" font-size="24" fill="#17324b" font-weight="400">GPIO_Mode_AF_PP</text>
+<text x="1070" y="1745" font-size="25" fill="#17324b" font-weight="400">复用推挽，由外设驱动</text>
+<rect x="74" y="1762" width="1452" height="50" fill="#f0f5fa"/>
+<text x="86" y="1796" font-size="25" fill="#17324b" font-weight="400">GPIO_Speed</text>
+<text x="594" y="1796" font-size="24" fill="#17324b" font-weight="400">GPIO_Speed_50MHz</text>
+<text x="1070" y="1796" font-size="25" fill="#17324b" font-weight="400">输出速度等级，非 PWM 频率</text>
+<text x="64" y="1886" font-size="34" fill="#2267ac" font-weight="700">04  不传结构体的函数：后面的参数也要分清</text>
+<rect x="64" y="1912" width="1472" height="243" rx="15" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1953" font-size="24" fill="#2267ac" font-weight="500">TIM_SetCompare1(TIM2, compareValue);</text>
+<text x="910" y="1953" font-size="23" fill="#17324b" font-weight="400">compareValue 是 CCR1；当前循环为 0～100。</text>
+<text x="86" y="2006" font-size="24" fill="#2267ac" font-weight="500">TIM_OC1PreloadConfig(TIM2, TIM_OCPreload_Enable);</text>
+<text x="910" y="2006" font-size="23" fill="#17324b" font-weight="400">CCR 预装载开关宏，不是 ENABLE。</text>
+<text x="86" y="2059" font-size="24" fill="#2267ac" font-weight="500">TIM_Cmd(TIM2, ENABLE);</text>
+<text x="910" y="2059" font-size="23" fill="#17324b" font-weight="400">ENABLE 启动计数，不是设置占空比。</text>
+<text x="86" y="2112" font-size="24" fill="#2267ac" font-weight="500">TIM_CCxCmd(TIM2, TIM_Channel_1, TIM_CCx_Disable);</text>
+<text x="910" y="2112" font-size="23" fill="#17324b" font-weight="400">依次为定时器、通道、通道开关宏。</text>
+<rect x="64" y="2182" width="1472" height="141" rx="15" fill="#fff3e7" stroke="#ecd9c7" stroke-width="2"/>
+<text x="88" y="2224" font-size="25" fill="#a85918" font-weight="400">当前代码自定义 PWM_SetCompare1(value)，内部再调用标准库 TIM_SetCompare1(TIM2, value)。</text>
+<text x="88" y="2262" font-size="25" fill="#a85918" font-weight="400">当前 PWM1＋高有效、向上计数、ARR＝99：value 0～100 → 高占比 0%～100%。</text>
+<text x="88" y="2300" font-size="25" fill="#a85918" font-weight="400">原工程未主动启用 CCR 预装载；上面保留该函数作扩展学习，不擅自改完成品。</text>
+<text x="64" y="2371" font-size="24" fill="#50677c" font-weight="400">PWM 载波周期约 1 ms；程序每 10 ms 调一步，渐亮再渐暗的名义循环约 2.02 s。</text>
+<text x="64" y="2408" font-size="24" fill="#50677c" font-weight="400">复用推挽无需为了拉高信号另加上拉；LED 实际亮暗方向取决于接法，截图不能代替接线核对。</text>
+<text x="64" y="2445" font-size="24" fill="#50677c" font-weight="400">PSC＝Prescaler 预分频器；ARR＝Auto-Reload Register 自动重装载；CCR＝Capture/Compare Register。</text>
+<text x="64" y="2501" font-size="21" fill="#50677c" font-weight="400">2026-10-20 · 结合当前 PWM.c、main.c 与标准库定义 · 变量名可改，结构体成员名和函数参数类别不能混淆。</text>
+</g></svg>

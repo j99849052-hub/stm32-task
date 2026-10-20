@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2840" viewBox="0 0 1600 2840"><title>PWM输出比较初始化结构体八个成员复习图</title><desc>先掌握模式、通道开关、比较值和主输出极性。再区分互补输出与空闲电平。含 PWM 波形对照和标准库填写示例。</desc><g font-family="Microsoft YaHei, Noto Sans CJK SC, sans-serif">
+<rect x="0" y="0" width="1600" height="2840" rx="0" fill="#f4f7fb" stroke="#f4f7fb" stroke-width="2"/>
+<text x="64" y="83" font-size="49" fill="#17324b" font-weight="700" text-anchor="start">PWM 初始化结构体 · 8 个成员怎么用</text>
+<text x="64" y="132" font-size="28" fill="#50677c" font-weight="400" text-anchor="start">TIM_OCInitTypeDef：输出比较初始化结构体；PWM 只是输出比较的一种模式。</text>
+<rect x="64" y="165" width="1472" height="129" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="89" y="212" font-size="33" fill="#2267ac" font-weight="700" text-anchor="start">普通 PWM 先记四件事：模式、通道开关、比较值、有效极性。</text>
+<text x="89" y="258" font-size="27" fill="#17324b" font-weight="400" text-anchor="start">当前 C8T6 使用 TIM2 / TIM3 / TIM4 时，另外四项高级输出设置不会用于这些通道。</text>
+<text x="64" y="337" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">TIM＝Timer 定时器；OC＝Output Compare 输出比较；PWM＝Pulse Width Modulation 脉宽调制</text>
+<text x="64" y="400" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">01  普通 PWM 重点掌握：这四项一起决定输出</text>
+<rect x="64" y="425" width="724" height="244" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="467" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OCMode</text>
+<text x="86" y="505" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Output Compare Mode · 输出比较模式</text>
+<text x="86" y="546" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">常用：TIM_OCMode_PWM1 / PWM2。</text>
+<text x="86" y="581" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">向上计数：PWM1 在 CNT &lt; CCR 时有效；</text>
+<text x="86" y="616" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">PWM2 则相反；有效不一定等于高电平。</text>
+<text x="86" y="651" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">另有 Timing / Active / Inactive / Toggle。</text>
+<rect x="812" y="425" width="724" height="244" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="467" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OutputState</text>
+<text x="834" y="505" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Output State · 主输出通道开关</text>
+<text x="834" y="546" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OutputState_Enable：允许通道输出。</text>
+<text x="834" y="581" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OutputState_Disable：禁止通道输出。</text>
+<text x="834" y="616" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不是设引脚高低，也不是启动计数器。</text>
+<text x="834" y="651" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">启动计数另用 TIM_Cmd(TIMx, ENABLE)。</text>
+<rect x="64" y="690" width="724" height="244" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="732" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_Pulse</text>
+<text x="86" y="770" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Pulse · 写入 CCRx 的初始比较值</text>
+<text x="86" y="811" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">例：通道 1 写入 CCR1；本接口范围 0～65535。</text>
+<text x="86" y="846" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不是直接填百分比，也不是直接填微秒。</text>
+<text x="86" y="881" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">PWM1＋High、向上计数、ARR＝99 时：</text>
+<text x="86" y="916" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">Pulse＝30 → 30 拍高、70 拍低 → 高占比 30%。</text>
+<rect x="812" y="690" width="724" height="244" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="732" font-size="31" fill="#2267ac" font-weight="700" text-anchor="start">TIM_OCPolarity</text>
+<text x="834" y="770" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Output Compare Polarity · 主输出极性</text>
+<text x="834" y="811" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCPolarity_High：有效时输出高电平。</text>
+<text x="834" y="846" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCPolarity_Low：有效时输出低电平。</text>
+<text x="834" y="881" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">选择同一输出状态如何映射为高 / 低。</text>
+<text x="834" y="916" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不是 ETR 输入“选上升沿 / 下降沿”的参数。</text>
+<text x="64" y="1007" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">02  把模式、Pulse、极性放在同一时间轴上看</text>
+<text x="64" y="1049" font-size="26" fill="#50677c" font-weight="400" text-anchor="start">条件：边沿对齐、向上计数、ARR＝99、CCR＝30；主输出正常，无死区 / 刹车影响。</text>
+<rect x="64" y="1071" width="1472" height="258" rx="16" fill="#ffffff" stroke="#d4e1ea" stroke-width="2"/>
+<path d="M810 1103 V1298" stroke="#9db0c2" stroke-width="2" stroke-dasharray="7 6"/>
+<text x="525" y="1102" font-size="23" fill="#50677c" font-weight="400" text-anchor="start">CNT＝0</text>
+<text x="810" y="1102" font-size="23" fill="#50677c" font-weight="400" text-anchor="middle">30</text>
+<text x="1475" y="1102" font-size="23" fill="#50677c" font-weight="400" text-anchor="end">下一周期 0</text>
+<text x="88" y="1147" font-size="27" fill="#2267ac" font-weight="700" text-anchor="start">PWM1 ＋ High</text>
+<text x="330" y="1147" font-size="24" fill="#50677c" font-weight="400" text-anchor="start">高占比 30%</text>
+<path d="M525 1126 H810 V1158 H1475" fill="none" stroke="#2267ac" stroke-width="4"/>
+<text x="88" y="1213" font-size="27" fill="#117b70" font-weight="700" text-anchor="start">PWM1 ＋ Low</text>
+<text x="330" y="1213" font-size="24" fill="#50677c" font-weight="400" text-anchor="start">高占比 70%</text>
+<path d="M525 1224 H810 V1192 H1475" fill="none" stroke="#117b70" stroke-width="4"/>
+<text x="88" y="1279" font-size="27" fill="#a85918" font-weight="700" text-anchor="start">PWM2 ＋ High</text>
+<text x="330" y="1279" font-size="24" fill="#50677c" font-weight="400" text-anchor="start">高占比 70%</text>
+<path d="M525 1290 H810 V1258 H1475" fill="none" stroke="#a85918" stroke-width="4"/>
+<text x="64" y="1371" font-size="26" fill="#117b70" font-weight="500" text-anchor="start">PWM1＋High 的高电平占空比＝CCR ÷ (ARR＋1)；上述条件下适用，不能脱离模式 / 极性套用。</text>
+<text x="64" y="1412" font-size="26" fill="#50677c" font-weight="400" text-anchor="start">计数与 CCR 的大小关系持续决定 PWM 状态；不只是 CNT＝CCR 那一瞬间才决定输出。</text>
+<text x="64" y="1484" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">03  另外四项：互补输出与高级定时器空闲电平</text>
+<text x="64" y="1526" font-size="26" fill="#50677c" font-weight="400" text-anchor="start">当前 C8T6 看 TIM1：通道 1～3 有 CHxN 互补输出，通道 4 没有；N 是互补输出标记。</text>
+<rect x="64" y="1551" width="724" height="244" rx="16" fill="#fff8f0" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1593" font-size="31" fill="#a85918" font-weight="700" text-anchor="start">TIM_OutputNState</text>
+<text x="86" y="1631" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">Complementary Output State · 互补输出开关</text>
+<text x="86" y="1672" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OutputNState_Enable：允许互补输出。</text>
+<text x="86" y="1707" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OutputNState_Disable：禁止互补输出。</text>
+<text x="86" y="1742" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">例如控制 CH1N，不是另一个独立计数器。</text>
+<text x="86" y="1777" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">开启它，不等于自动配置好死区或输出引脚。</text>
+<rect x="812" y="1551" width="724" height="244" rx="16" fill="#fff8f0" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="1593" font-size="31" fill="#a85918" font-weight="700" text-anchor="start">TIM_OCNPolarity</text>
+<text x="834" y="1631" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">互补输出路径的极性</text>
+<text x="834" y="1672" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCNPolarity_High / Low。</text>
+<text x="834" y="1707" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">分别配置互补输出为高有效 / 低有效。</text>
+<text x="834" y="1742" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">它与主输出极性是两项独立配置。</text>
+<text x="834" y="1777" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不能把 High 理解成“CHxN 永远输出高”。</text>
+<rect x="64" y="1816" width="724" height="244" rx="16" fill="#fff8f0" stroke="#d4e1ea" stroke-width="2"/>
+<text x="86" y="1858" font-size="31" fill="#a85918" font-weight="700" text-anchor="start">TIM_OCIdleState</text>
+<text x="86" y="1896" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">主输出的 Idle State · 空闲目标电平</text>
+<text x="86" y="1937" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCIdleState_Set：空闲目标为高。</text>
+<text x="86" y="1972" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCIdleState_Reset：空闲目标为低。</text>
+<text x="86" y="2007" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">用于高级定时器的主输出空闲状态。</text>
+<text x="86" y="2042" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不是 PWM 正常周期中的低电平部分。</text>
+<rect x="812" y="1816" width="724" height="244" rx="16" fill="#fff8f0" stroke="#d4e1ea" stroke-width="2"/>
+<text x="834" y="1858" font-size="31" fill="#a85918" font-weight="700" text-anchor="start">TIM_OCNIdleState</text>
+<text x="834" y="1896" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">互补输出的 Idle State · 空闲目标电平</text>
+<text x="834" y="1937" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCNIdleState_Set：空闲目标为高。</text>
+<text x="834" y="1972" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">TIM_OCNIdleState_Reset：空闲目标为低。</text>
+<text x="834" y="2007" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">与上一项类似，但对象是 CHxN。</text>
+<text x="834" y="2042" font-size="25" fill="#17324b" font-weight="400" text-anchor="start">不是“计数器暂停时必然输出该电平”。</text>
+<rect x="64" y="2082" width="1472" height="109" rx="16" fill="#fff1e4" stroke="#edd8c5" stroke-width="2"/>
+<text x="88" y="2121" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">Idle 实际引脚电平还受主输出门控、关断选择、死区、通道和引脚配置等影响，不能只看这一项。</text>
+<text x="88" y="2160" font-size="25" fill="#a85918" font-weight="400" text-anchor="start">MOE＝Main Output Enable，主输出使能；用 TIM1 时，还需注意总输出门控 TIM_CtrlPWMOutputs。</text>
+<text x="64" y="2263" font-size="35" fill="#2267ac" font-weight="700" text-anchor="start">04  普通 TIM2 通道 1：先填默认值，再覆盖四项</text>
+<rect x="64" y="2288" width="1472" height="298" rx="16" fill="#e8f3ff" stroke="#cbdff2" stroke-width="2"/>
+<text x="88" y="2324" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">TIM_OCInitTypeDef outputConfig;</text>
+<text x="88" y="2357" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">TIM_OCStructInit(&amp;outputConfig);</text>
+<text x="88" y="2390" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">outputConfig.TIM_OCMode = TIM_OCMode_PWM1;</text>
+<text x="88" y="2423" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">outputConfig.TIM_OutputState = TIM_OutputState_Enable;</text>
+<text x="88" y="2456" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">outputConfig.TIM_Pulse = 30;</text>
+<text x="88" y="2489" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">outputConfig.TIM_OCPolarity = TIM_OCPolarity_High;</text>
+<text x="88" y="2522" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">TIM_OC1Init(TIM2, &amp;outputConfig);</text>
+<text x="88" y="2555" font-size="26" fill="#2267ac" font-weight="400" text-anchor="start">TIM_Cmd(TIM2, ENABLE);</text>
+<text x="64" y="2626" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">StructInit 只填内存默认值，不启动硬件；OC1Init 的 1 选通道，TIM2 选定时器。</text>
+<text x="64" y="2665" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">示例假设时钟、引脚和时基已配置，ARR＝99；频率、复用输出、预装载等仍需另配。</text>
+<text x="64" y="2704" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">CNT＝Counter 计数器；CCR＝Capture/Compare Register 捕获/比较寄存器。</text>
+<text x="64" y="2743" font-size="25" fill="#50677c" font-weight="400" text-anchor="start">ARR＝Auto-Reload Register 自动重装载寄存器；PWM 频率还与时钟、PSC 分频有关。</text>
+<text x="64" y="2810" font-size="22" fill="#50677c" font-weight="400" text-anchor="start">2026-10-20 · STM32F103C8T6 标准库 · 依据当前 stm32f10x_tim.h/.c 与 ST RM0008；未修改学习工程。</text>
+</g></svg>
