@@ -1,0 +1,21 @@
+# Keil build output and per-user state
+firmware/**/MDK-ARM/wuxianbeiproject/
+*.uvguix.*
+*.uvgui.*
+*.uvmpw
+*.o
+*.d
+*.axf
+*.map
+*.lnp
+*.dep
+*.build_log.htm
+*.bak
+*.tmp
+.DS_Store
+Thumbs.db
+
+# Unused vendor examples and prebuilt DSP libraries
+firmware/**/Drivers/CMSIS/docs/
+firmware/**/Drivers/CMSIS/DSP/
+firmware/**/Drivers/CMSIS/Lib/

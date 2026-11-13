@@ -1,0 +1,8 @@
+Build date: 2026-11-13
+Toolchain: Keil uVision / Arm Compiler 6.24
+Target: STM32F103C8
+Rebuilt the complete source subset copied from this publishing folder in an English-named validation directory.
+Program Size: Code=37620 RO-data=3432 RW-data=32 ZI-data=3280
+"wuxianbeiproject\wuxianbeiproject.axf" - 0 Error(s), 0 Warning(s).
+Build Time Elapsed:  00:00:03
+No flash/download performed.
